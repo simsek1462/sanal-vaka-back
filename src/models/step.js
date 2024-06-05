@@ -21,6 +21,6 @@ const stepSchema = new mongoose.Schema({
     }
 });
 
-const Step = mongoose.model('Step');
+const Step = mongoose.model('Step',stepSchema);
 
 module.exports = Step;
