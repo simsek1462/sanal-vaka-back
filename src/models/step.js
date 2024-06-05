@@ -1,18 +1,19 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const stepSchema = new mongoose.Schema({
     title: {
-        type:String,
+        type: String,
         required: true
     },
     description: {
-        type:String,
+        type: String,
         required: true
     },
     heads: [
         {
             type: Schema.Types.ObjectId,
-            ref:"HeadTitle"
+            ref: "HeadTitle"
         }
     ],
     type: {
@@ -21,6 +22,6 @@ const stepSchema = new mongoose.Schema({
     }
 });
 
-const Step = mongoose.model('Step',stepSchema);
+const Step = mongoose.model('Step', stepSchema);
 
 module.exports = Step;

@@ -12,6 +12,6 @@ const HeadTitleSchema = new Schema({
   }]
 });
 
-const HeadTitle = mongoose.model('HeadTitle', HeadTitle);
+const HeadTitle = mongoose.model('HeadTitle', HeadTitleSchema);
 
 module.exports = HeadTitle;

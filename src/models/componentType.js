@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ComponentTypeSchema = new Schema({
-    title:{
+    title: {
         type: String,
         required: true
     },
-    description:{
+    description: {
         type: String,
     }
 })
-const ComponentType = mongoose.model('ComponentType',ComponentType);
+const ComponentType = mongoose.model('ComponentType', ComponentTypeSchema);
 module.exports = ComponentType;
