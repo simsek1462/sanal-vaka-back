@@ -1,13 +1,15 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const Role = require('../models/role');
 const config = require('../config/config');
 
-let refreshTokens = []; 
+let refreshTokens = [];
 
 exports.register = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = new User({ username, password });
+    const { email, password, role } = req.body;
+    const user = new User({ email, password, role });
+
     await user.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
@@ -17,36 +19,40 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username,password });
+    const { email, password } = req.body;
+    console.log(req.body)
+    const user = await User.findOne({ email }).populate('role');
 
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid username or password' });
+    console.log(user)
+    if (!user || !(await user.comparePassword(password))) {
+      return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    const token = jwt.sign({ id: user._id,role:user.role }, config.secret, { expiresIn: config.tokenLife });
-    const refreshToken = jwt.sign({ id: user._id,role:user.role }, config.refreshTokenSecret, { expiresIn: config.refreshTokenLife });
+    const token = jwt.sign({ id: user._id, role: user.role.name }, config.secret, { expiresIn: config.tokenLife });
+    const refreshToken = jwt.sign({ id: user._id, role: user.role.name }, config.refreshTokenSecret, { expiresIn: config.refreshTokenLife });
 
     refreshTokens.push(refreshToken);
 
-    res.json({ token, refreshToken });
+    res.json({ token, refreshToken, user });
   } catch (error) {
+
     res.status(500).json({ error: 'Error logging in' });
   }
 };
 
-exports.refreshToken = (req, res) => {
+exports.refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken || !refreshTokens.includes(refreshToken)) {
     return res.status(403).json({ error: 'Invalid refresh token' });
   }
 
-  jwt.verify(refreshToken, config.refreshTokenSecret, (err, user) => {
+  jwt.verify(refreshToken, config.refreshTokenSecret, async (err, user) => {
     if (err) return res.status(403).json({ error: 'Invalid refresh token' });
+    const role = await Role.findById(user.role)
 
-    const newToken = jwt.sign({ id: user.id, role:user.role }, config.secret, { expiresIn: config.tokenLife });
-    const newRefreshToken = jwt.sign({ id: user.id , role:user.role }, config.refreshTokenSecret, { expiresIn: config.refreshTokenLife });
+    const newToken = jwt.sign({ id: user.id, role: role.name }, config.secret, { expiresIn: config.tokenLife });
+    const newRefreshToken = jwt.sign({ id: user.id, role: role.name }, config.refreshTokenSecret, { expiresIn: config.refreshTokenLife });
 
     refreshTokens = refreshTokens.filter(token => token !== refreshToken);
     refreshTokens.push(newRefreshToken);
@@ -54,21 +60,30 @@ exports.refreshToken = (req, res) => {
     res.json({ token: newToken, refreshToken: newRefreshToken });
   });
 };
+
 exports.verifyTokens = (req, res) => {
   const { token, refreshToken } = req.body;
 
-  if (!token || !refreshToken) {
+
+  if (!token && !refreshToken) {
     return res.status(400).json({ message: 'Token and refresh token are required' });
   }
 
   try {
-    const decodedToken = jwt.verify(token, config.secret);
-    console.log('Decoded Access Token:', decodedToken);
+    if (token) {
 
-    const decodedRefreshToken = jwt.verify(refreshToken, config.refreshTokenSecret);
-    console.log('Decoded Refresh Token:', decodedRefreshToken);
+      console.log('icerde', token);
+      const decodedToken = jwt.verify(token, config.secret);
+      console.log('Decoded Access Token:', decodedToken);
+      return res.status(200).json({ message: 'Tokens are valid', payload: decodedToken });
+    }
+    if (refreshToken) {
 
-    return res.status(200).json({ message: 'Tokens are valid',payload: decodedToken.payload });
+      const decodedRefreshToken = jwt.verify(refreshToken, config.refreshTokenSecret);
+      console.log('Decoded Refresh Token:', decodedRefreshToken);
+      return res.status(200).json({ message: 'DecodedRefreshToken are valid', payload: decodedRefreshToken });
+    }
+
   } catch (error) {
     return res.status(401).json({ message: 'Invalid token or refresh token', error: error.message });
   }
