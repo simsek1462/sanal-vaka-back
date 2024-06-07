@@ -9,6 +9,8 @@ const headTitleRoutes = require('./routes/headTitleRoutes');
 const choiceRoutes = require('./routes/choiceRoutes');
 const stepRoutes = require('./routes/stepRoutes');
 const questionRoutes = require('./routes/questionRoutes');
+const departmentRoutes = require('./routes/departmentRoutes');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -25,6 +27,7 @@ app.use('/api/headTitles', headTitleRoutes);
 app.use('/api/choices', choiceRoutes);
 app.use('/api/steps', stepRoutes);
 app.use('/api/questions', questionRoutes);
+app.use('/api/departments', departmentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
