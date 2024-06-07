@@ -16,6 +16,12 @@ const stepSchema = new mongoose.Schema({
             ref: "HeadTitle"
         }
     ],
+    questions: [
+        {
+            type:Schema.Types.ObjectId,
+            ref: "Question"
+        }
+    ],
     type: {
         type: Schema.Types.ObjectId,
         ref: 'ComponentType'
