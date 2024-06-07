@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
+const authenticateToken = require('../middlewares/auth');
 const choiceController = require('../controllers/choiceController');
 
-router.post('/', choiceController.createChoice);
+router.post('/', authenticateToken, choiceController.createChoice);
 
-router.get('/', choiceController.getAllChoices);
+router.get('/', authenticateToken, choiceController.getAllChoices);
 
-router.get('/:id', choiceController.getChoiceById);
+router.get('/:id', authenticateToken, choiceController.getChoiceById);
 
-router.put('/:id', choiceController.updateChoiceById);
+router.put('/:id', authenticateToken, choiceController.updateChoiceById);
 
-router.delete('/:id', choiceController.deleteChoiceById);
+router.delete('/:id', authenticateToken, choiceController.deleteChoiceById);
 
 module.exports = router;

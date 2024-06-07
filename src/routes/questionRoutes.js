@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
+const authenticateToken = require('../middlewares/auth');
 const questionController = require('../controllers/questionController');
 
-router.post('/', questionController.createQuestion);
+router.post('/', authenticateToken,questionController.createQuestion);
 
-router.get('/', questionController.getAllQuestions);
+router.get('/', authenticateToken,questionController.getAllQuestions);
 
-router.get('/:id', questionController.getQuestionById);
+router.get('/:id',authenticateToken, questionController.getQuestionById);
 
-router.put('/:id', questionController.updateQuestionById);
+router.put('/:id',authenticateToken, questionController.updateQuestionById);
 
-router.delete('/:id', questionController.deleteQuestionById);
+router.delete('/:id', authenticateToken, questionController.deleteQuestionById);
 
 module.exports = router;

@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const authenticateToken = require('../middlewares/auth');
 const scenarioController = require('../controllers/scenarioController');
 
 
-router.post('/scenarios', scenarioController.createScenario);
+router.post('/scenario', authenticateToken, scenarioController.createScenario);
 
-router.get('/scenarios', scenarioController.getScenarios);
+router.get('/scenario', authenticateToken, scenarioController.getScenarios);
 
-router.get('/scenarios/:id', scenarioController.getScenarioById);
+router.get('/scenario/:id', authenticateToken, scenarioController.getScenarioById);
 
-router.put('/scenarios/:id', scenarioController.updateScenario);
+router.put('/scenario/:id', authenticateToken, scenarioController.updateScenario);
 
-router.delete('/scenarios/:id', scenarioController.deleteScenario);
+router.delete('/scenario/:id', authenticateToken, scenarioController.deleteScenario);
 
 module.exports = router;

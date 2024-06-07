@@ -21,13 +21,13 @@ mongoose.connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: t
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
-app.use('/api', userRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api',scenarioRoutes);
-app.use('/api/headTitles', headTitleRoutes);
-app.use('/api/choices', choiceRoutes);
-app.use('/api/steps', stepRoutes);
-app.use('/api/questions', questionRoutes);
-app.use('/api/departments', departmentRoutes);
+app.use('/api/headTitle', headTitleRoutes);
+app.use('/api/choice', choiceRoutes);
+app.use('/api/step', stepRoutes);
+app.use('/api/question', questionRoutes);
+app.use('/api/department', departmentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const authenticateToken = require('../middlewares/auth');
 const headTitleController = require('../controllers/headTitleController');
 
-router.post('/', headTitleController.createHeadTitle);
+router.post('/', authenticateToken,headTitleController.createHeadTitle);
 
-router.get('/', headTitleController.getAllHeadTitles);
+router.get('/', authenticateToken,headTitleController.getAllHeadTitles);
 
-router.get('/:id', headTitleController.getHeadTitleById);
+router.get('/:id',authenticateToken, headTitleController.getHeadTitleById);
 
-router.put('/:id', headTitleController.updateHeadTitleById);
+router.put('/:id',authenticateToken, headTitleController.updateHeadTitleById);
 
 router.delete('/:id', headTitleController.deleteHeadTitleById);
 

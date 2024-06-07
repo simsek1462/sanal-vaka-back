@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
+const authenticateToken = require('../middlewares/auth');
 const stepController = require('../controllers/stepController');
 
-router.post('/', stepController.createStep);
+router.post('/', authenticateToken,stepController.createStep);
 
-router.get('/', stepController.getAllSteps);
+router.get('/', authenticateToken,stepController.getAllSteps);
 
-router.get('/:id', stepController.getStepById);
+router.get('/:id', authenticateToken,stepController.getStepById);
 
-router.put('/:id', stepController.updateStepById);
+router.put('/:id', authenticateToken,stepController.updateStepById);
 
-router.delete('/:id', stepController.deleteStepById);
+router.delete('/:id', authenticateToken,stepController.deleteStepById);
 
 module.exports = router;
