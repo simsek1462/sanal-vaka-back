@@ -71,10 +71,21 @@ exports.updateStepById = async (req, res) => {
 exports.deleteStepById = async (req, res) => {
   try {
     const { id } = req.params;
+    const { departmentId } = req.body;
+
     const deletedStep = await Step.findByIdAndDelete(id);
     if (!deletedStep) {
       return res.status(404).json({ error: 'Step not found' });
     }
+
+    const department = await Department.findById(departmentId);
+    if (!department) {
+      return res.status(404).json({ error: 'Department not found' });
+    }
+
+    department.testSteps.pull(id);
+    await department.save();
+
     res.status(200).json({ message: 'Step deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });

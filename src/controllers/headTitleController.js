@@ -58,10 +58,21 @@ exports.updateHeadTitleById = async (req, res) => {
 exports.deleteHeadTitleById = async (req, res) => {
   try {
     const { id } = req.params;
+    const { stepID } = req.body;
+
     const deletedHeadTitle = await HeadTitle.findByIdAndDelete(id);
     if (!deletedHeadTitle) {
       return res.status(404).json({ error: 'HeadTitle not found' });
     }
+
+    const step = await Step.findById(stepID);
+    if (!step) {
+      return res.status(404).json({ error: 'Step not found' });
+    }
+
+    step.heads.pull(id);
+    await step.save();
+
     res.status(200).json({ message: 'HeadTitle deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
