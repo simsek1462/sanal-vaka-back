@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   name: {type: String,required:true},
   surname: {type:String,required:true},
-  deparment: {type:mongoose.Schema.Types.ObjectId,required:true ,ref: 'Department'},
+  department: {type:mongoose.Schema.Types.ObjectId,required:true ,ref: 'Department'},
   isVerified: {type: Boolean,default:false},
   password: { type: String, required: true },
   role: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Role' },
