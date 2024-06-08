@@ -20,10 +20,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body)
     const user = await User.findOne({ email }).populate('role');
-
-    console.log(user)
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
@@ -50,10 +47,8 @@ exports.refreshToken = async (req, res) => {
   jwt.verify(refreshToken, config.refreshTokenSecret, async (err, user) => {
     if (err) return res.status(403).json({ error: 'Invalid refresh token' });
     const role = await Role.findById(user.role)
-
     const newToken = jwt.sign({ id: user.id, role: role.name }, config.secret, { expiresIn: config.tokenLife });
     const newRefreshToken = jwt.sign({ id: user.id, role: role.name }, config.refreshTokenSecret, { expiresIn: config.refreshTokenLife });
-
     refreshTokens = refreshTokens.filter(token => token !== refreshToken);
     refreshTokens.push(newRefreshToken);
 
@@ -72,15 +67,14 @@ exports.verifyTokens = (req, res) => {
   try {
     if (token) {
 
-      console.log('icerde', token);
+
       const decodedToken = jwt.verify(token, config.secret);
-      console.log('Decoded Access Token:', decodedToken);
       return res.status(200).json({ message: 'Tokens are valid', payload: decodedToken });
     }
     if (refreshToken) {
 
       const decodedRefreshToken = jwt.verify(refreshToken, config.refreshTokenSecret);
-      console.log('Decoded Refresh Token:', decodedRefreshToken);
+
       return res.status(200).json({ message: 'DecodedRefreshToken are valid', payload: decodedRefreshToken });
     }
 

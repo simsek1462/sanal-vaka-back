@@ -1,16 +1,23 @@
 const Question = require('../models/question');
+const Step = require('../models/step');
 
 exports.createQuestion = async (req, res) => {
   try {
-    const { title, question } = req.body;
+    const { title, question, stepId } = req.body;
     const newQuestion = new Question({ title, question });
     await newQuestion.save();
+    const step = await Step.findById(stepId);
+    if (!step) {
+      return res.status(404).json({ error: 'Step not found' });
+    }
+    step.questions.push(newQuestion._id);
+    await step.save();
+
     res.status(201).json(newQuestion);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
-
 exports.getAllQuestions = async (req, res) => {
   try {
     const questions = await Question.find();
