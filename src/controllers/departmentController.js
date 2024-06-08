@@ -1,4 +1,5 @@
 const Department = require('../models/department');
+const { populate } = require('../models/user');
 
 exports.createDepartment = async (req, res) => {
   try {

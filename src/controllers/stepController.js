@@ -2,9 +2,16 @@ const Step = require('../models/step');
 
 exports.createStep = async (req, res) => {
   try {
-    const { title, description, heads, type } = req.body;
+    const { title, description, heads, type, departmentId } = req.body;
     const newStep = new Step({ title, description, heads, type });
     await newStep.save();
+    const department = await Department.findById(departmentId);
+    if (!department) {
+      return res.status(404).json({ error: 'Department not found' });
+    }
+    department.testSteps.push(newStep._id);
+    await department.save();
+
     res.status(201).json(newStep);
   } catch (error) {
     res.status(400).json({ error: error.message });
