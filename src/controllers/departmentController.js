@@ -1,4 +1,4 @@
-const Department = require('../models/Department');
+const Department = require('../models/department');
 
 exports.createDepartment = async (req, res) => {
   try {
@@ -13,7 +13,15 @@ exports.createDepartment = async (req, res) => {
 
 exports.getAllDepartments = async (req, res) => {
   try {
-    const departments = await Department.find().populate('testSteps');
+    const departments = await Department.find()
+      .populate({
+        path: 'testSteps',
+        populate: [
+          { path: 'heads', model: 'HeadTitle' },
+          { path: 'questions', model: 'Question' },
+          { path: 'type', model: 'ComponentType' }
+        ]
+      });
     res.status(200).json(departments);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -22,7 +30,15 @@ exports.getAllDepartments = async (req, res) => {
 
 exports.getDepartmentById = async (req, res) => {
   try {
-    const department = await Department.findById(req.params.id).populate('testSteps');
+    const department = await Department.findById(req.params.id)
+      .populate({
+        path: 'testSteps',
+        populate: [
+          { path: 'heads', model: 'HeadTitle' },
+          { path: 'questions', model: 'Question' },
+          { path: 'type', model: 'ComponentType' }
+        ]
+      });
     if (!department) {
       return res.status(404).json({ error: 'Department not found' });
     }
@@ -31,7 +47,6 @@ exports.getDepartmentById = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 exports.updateDepartment = async (req, res) => {
   try {
     const { name, faculty, testSteps } = req.body;
