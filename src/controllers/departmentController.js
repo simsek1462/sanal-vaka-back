@@ -14,8 +14,8 @@ exports.createDepartment = async (req, res) => {
 
 exports.getStepsByDepartmentId = async (req, res) => {
   try {
-    const { departmentId } = req.params;
-    const department = await Department.findById(departmentId).populate('testSteps');
+    const { id } = req.params;
+    const department = await Department.findById(id).populate('testSteps');
     if (!department) {
       return res.status(404).json({ error: 'Department not found' });
     }
