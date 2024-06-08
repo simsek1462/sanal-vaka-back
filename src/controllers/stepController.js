@@ -41,6 +41,19 @@ exports.getStepById = async (req, res) => {
   }
 };
 
+exports.getHeadsByStepId = async (req,res) =>{
+  try {
+    const { id } = req.params;
+    const step = await Step.findById(id).populate('heads');
+    if (!step) {
+      return res.status(404).json({ error: 'Step not found' });
+    }
+    res.status(200).json(step.heads);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
 exports.updateStepById = async (req, res) => {
   try {
     const { id } = req.params;
