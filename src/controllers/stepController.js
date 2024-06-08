@@ -1,3 +1,4 @@
+const Department = require('../models/department');
 const Step = require('../models/step');
 
 exports.createStep = async (req, res) => {

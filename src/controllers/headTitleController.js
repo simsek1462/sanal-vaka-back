@@ -1,10 +1,17 @@
 const HeadTitle = require('../models/headTitle');
+const Step = require('../models/step');
 
 exports.createHeadTitle = async (req, res) => {
   try {
-    const { title, choices } = req.body;
+    const { title, choices ,stepID } = req.body;
     const newHeadTitle = new HeadTitle({ title, choices });
     await newHeadTitle.save();
+    const step = await Step.findById(stepID);
+    if (!step) {
+      return res.status(404).json({ error: 'Step not found' });
+    }
+    step.heads.push(newHeadTitle._id);
+    await step.save();
     res.status(201).json(newHeadTitle);
   } catch (error) {
     res.status(400).json({ error: error.message });
