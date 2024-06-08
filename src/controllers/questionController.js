@@ -58,20 +58,20 @@ exports.updateQuestionById = async (req, res) => {
 exports.deleteQuestionById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { headTitleId } = req.body;
+    const { stepID } = req.body;
 
     const deletedQuestion = await Question.findByIdAndDelete(id);
     if (!deletedQuestion) {
       return res.status(404).json({ error: 'Question not found' });
     }
 
-    const headTitle = await HeadTitle.findById(headTitleId);
-    if (!headTitle) {
+    const step = await Step.findById(stepID);
+    if (!step) {
       return res.status(404).json({ error: 'HeadTitle not found' });
     }
 
-    headTitle.questions.pull(id); 
-    await headTitle.save();
+    step.questions.pull(id); 
+    await step.save();
 
     res.status(200).json({ message: 'Question deleted successfully' });
   } catch (error) {
