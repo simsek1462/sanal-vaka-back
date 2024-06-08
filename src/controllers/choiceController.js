@@ -58,10 +58,20 @@ exports.updateChoiceById = async (req, res) => {
 exports.deleteChoiceById = async (req, res) => {
   try {
     const { id } = req.params;
+    const { headTitleId } = req.body;
     const deletedChoice = await Choice.findByIdAndDelete(id);
     if (!deletedChoice) {
       return res.status(404).json({ error: 'Choice not found' });
     }
+
+    const headTitle = await HeadTitle.findById(headTitleId);
+    if (!headTitle) {
+      return res.status(404).json({ error: 'HeadTitle not found' });
+    }
+    
+    headTitle.choices.pull(id);
+    await headTitle.save();
+
     res.status(200).json({ message: 'Choice deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
