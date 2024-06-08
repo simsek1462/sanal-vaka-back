@@ -8,6 +8,10 @@ const ComponentTypeSchema = new Schema({
     },
     description: {
         type: String,
+    },
+    unique_int: {
+        type: Number,
+        unique:true
     }
 })
 const ComponentType = mongoose.model('ComponentType', ComponentTypeSchema);

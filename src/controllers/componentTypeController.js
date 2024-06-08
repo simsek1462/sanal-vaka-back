@@ -1,6 +1,5 @@
 const ComponentType = require('../models/componentType');
 
-
 exports.createComponentType = async (req, res) => {
   try {
     const componentType = new ComponentType(req.body);

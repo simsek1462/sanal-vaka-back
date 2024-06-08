@@ -9,6 +9,8 @@ router.get('/', authenticateToken,departmentController.getAllDepartments);
 
 router.get('/:id',authenticateToken, departmentController.getDepartmentById);
 
+router.get('/get-steps/:id',authenticateToken,departmentController.getStepsByDepartmentId);
+
 router.put('/:id', authenticateToken,departmentController.updateDepartment);
 
 router.delete('/:id', authenticateToken,departmentController.deleteDepartment);
