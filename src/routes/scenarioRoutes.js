@@ -12,6 +12,8 @@ router.get('/scenario/:id', authenticateToken, scenarioController.getScenarioByI
 
 router.get('/scenario/get-by-clinic/:clinicId',authenticateToken,scenarioController.getScenariosByClinicId);
 
+router.post('/scenario/check-answer',authenticateToken,scenarioController.checkAnswer);
+
 router.put('/scenario/:id', authenticateToken, scenarioController.updateScenario);
 
 router.delete('/scenario/:id', authenticateToken, scenarioController.deleteScenario);

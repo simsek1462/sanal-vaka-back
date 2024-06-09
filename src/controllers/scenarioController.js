@@ -10,6 +10,26 @@ exports.createScenario = async (req, res) => {
     }
 };
 
+exports.checkAnswer = async (req, res) => {
+    try {
+      const { scenarioId, questionId } = req.body;
+  
+      const scenario = await Scenario.findById(scenarioId);
+      if (!scenario) {
+        return res.status(404).json({ error: 'Scenario not found' });
+      }
+      const question = scenario.questions.find(q => q.questionId.equals(questionId));
+      if (!question) {
+        return res.status(404).json({ error: 'Yanlış soru' });
+      }
+  
+      res.status(200).json({ answer: question.answer });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  
+
 exports.getScenarios = async (req, res) => {
     try {
         const scenarios = await Scenario.find().populate('department clinic multipleChoiceAnwsers questions.questionId');
