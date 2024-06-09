@@ -36,7 +36,11 @@ exports.getScenariosByClinicId = async (req, res) => {
           path: 'department',
           populate: {
             path: 'testSteps',
-            model: 'Step'
+            model: 'Step',
+            populate: {
+              path: 'type',
+              model: 'ComponentType'
+            }
           }
         });
         
@@ -48,8 +52,8 @@ exports.getScenariosByClinicId = async (req, res) => {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  }
-
+  };
+  
 
 exports.updateScenario = async (req, res) => {
     try {
