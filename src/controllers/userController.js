@@ -1,5 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const config = require('../config/config');
+const jwt = require('jsonwebtoken');
 
 exports.createUser = async (req, res) => {
   try {
@@ -23,7 +25,23 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    console.log(token)
+    let userId;
+    if (!token) {
+      return res.sendStatus(401);
+    }
+    try {
+
+      const decodedToken = jwt.verify(token, config.secret);
+      userId = decodedToken.id;
+      console.log(userId);
+
+    } catch (error) {
+      return res.sendStatus(401);
+    }
+    const user = await User.findById(userId)
       .populate('department')
       .populate('role')
       .lean();

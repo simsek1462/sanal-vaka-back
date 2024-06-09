@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.post('/', userController.createUser);
 
-router.get('/', authenticateToken, userController.getAllUsers);
+//router.get('/', authenticateToken, userController.getAllUsers);
 
-router.get('/:id', authenticateToken, userController.getUserById);
+router.get('/', authenticateToken, userController.getUserById);
 
 router.put('/:id', authenticateToken, userController.updateUser);
 
