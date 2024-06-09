@@ -23,10 +23,16 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).populate('department').populate('role');
+    const user = await User.findById(req.params.id)
+      .populate('department')
+      .populate('role')
+      .lean();
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+    delete user.password;
+
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ error: error.message });
