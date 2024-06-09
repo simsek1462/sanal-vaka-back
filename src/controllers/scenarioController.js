@@ -27,9 +27,8 @@ exports.checkAnswer = async (req, res) => {
     const answer=question.answer;
     const title=q.title;
     const description=q.question;
-    const newQuestion = {title,description,answer};
-    console.log(newQuestion);
-    res.status(200).json({ newQuestion });
+   
+    res.status(200).json({ title,description,answer });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
