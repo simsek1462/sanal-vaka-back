@@ -114,7 +114,7 @@ exports.createOrFetchStudentScenarios = async (req, res) => {
         const allStudentScenarios = await StudentScenario.find({
             studentId,
             scenarioId: { $in: scenarioIds }
-        });
+        }).populate('scenarioId');
 
         res.status(200).json(allStudentScenarios);
     } catch (error) {
