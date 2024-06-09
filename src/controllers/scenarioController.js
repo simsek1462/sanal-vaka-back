@@ -29,17 +29,26 @@ exports.getScenariosByClinicId = async (req, res) => {
     }
   };
 
-exports.getScenarioById = async (req, res) => {
+  exports.getScenarioById = async (req, res) => {
     try {
-        const scenario = await Scenario.findById(req.params.id).populate('department clinic multipleChoiceAnwsers questions.questionId');
-        if (!scenario) {
-            return res.status(404).json({ error: 'Scenario not found' });
-        }
-        res.status(200).json(scenario);
+      const scenario = await Scenario.findById(req.params.id)
+        .populate({
+          path: 'department',
+          populate: {
+            path: 'testSteps',
+            model: 'Step'
+          }
+        });
+        
+      if (!scenario) {
+        return res.status(404).json({ error: 'Scenario not found' });
+      }
+  
+      res.status(200).json(scenario);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+      res.status(500).json({ error: err.message });
     }
-};
+  }
 
 
 exports.updateScenario = async (req, res) => {
