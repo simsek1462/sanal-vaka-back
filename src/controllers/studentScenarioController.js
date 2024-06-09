@@ -100,7 +100,7 @@ exports.createOrUpdateStudentScenario = async (req, res) => {
 exports.createOrFetchStudentScenarios = async (req, res) => {
     try {
         const { scenarioIds } = req.body;
-        console.log('req.body', scenarioIds)
+
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
 
@@ -124,7 +124,7 @@ exports.createOrFetchStudentScenarios = async (req, res) => {
 
         // Loop through each scenarioId
         for (const scenarioId of scenarioIds) {
-            console.log('scenId:', scenarioId)
+
 
             const scenario = await Scenario.findById(scenarioId);
             if (!scenario) {
