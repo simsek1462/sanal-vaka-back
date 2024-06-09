@@ -19,6 +19,20 @@ exports.getScenarios = async (req, res) => {
     }
 };
 
+exports.getScenariosByClinicId = async (req, res) => {
+    try {
+      const { clinicId } = req.params;
+      const scenarios = await Scenario.find({ clinic: clinicId })
+      
+      if (scenarios.length === 0) {
+        return res.status(404).json({ error: 'No scenarios found for this clinic' });
+      }
+  
+      res.status(200).json(scenarios);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 
 exports.getScenarioById = async (req, res) => {
     try {
