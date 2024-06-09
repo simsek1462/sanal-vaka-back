@@ -1,8 +1,12 @@
+const config = require('../config/config');
+const jwt = require('jsonwebtoken');
 const Scenario = require('../models/scenario');
 const StudentScenario = require('../models/studentScenario');
+const { verifyTokens } = require('./authController');
 
 exports.getAllStudentScenarios = async (req, res) => {
     try {
+      
         const studentScenarios = await StudentScenario.find();
         res.status(200).json(studentScenarios);
     } catch (error) {
@@ -24,14 +28,29 @@ exports.getStudentScenarioById = async (req, res) => {
 
 exports.createOrUpdateStudentScenario = async (req, res) => {
     try {
-        const { studentId, scenarioId, selectedChoices, selectedQuestions } = req.body;
-
+        const {  scenarioId, selectedChoices, selectedQuestions } = req.body;
+        const authHeader=req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        console.log(token)
+        let userId;
+        if (!token) {
+            return res.sendStatus(401);
+        }
+        try {
+           
+            const decodedToken = jwt.verify(token,config.secret);
+            userId = decodedToken.id;
+            console.log(userId);
+            
+        } catch (error) {
+            return res.sendStatus(401);
+        }
         const scenario = await Scenario.findById(scenarioId).populate('multipleChoiceAnwsers').populate('questions.questionId');
         if (!scenario) {
             return res.status(404).json({ error: 'Scenario not found' });
         }
 
-        let studentScenario = await StudentScenario.findOne({ studentId, scenarioId });
+        let studentScenario = await StudentScenario.findOne({ userId, scenarioId });
 
         if (studentScenario) {
             // If StudentScenario exists, check attemptsLeft
@@ -44,7 +63,7 @@ exports.createOrUpdateStudentScenario = async (req, res) => {
         } else {
             // Create new StudentScenario
             studentScenario = new StudentScenario({
-                studentId,
+                userId,
                 scenarioId,
                 score: 0,
                 attemptsLeft: 3 // Or any default value

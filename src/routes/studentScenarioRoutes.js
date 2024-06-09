@@ -10,7 +10,7 @@ router.get('/:id', authenticateToken, studentScenarioController.getStudentScenar
 
 router.post('/', authenticateToken, studentScenarioController.createOrUpdateStudentScenario);
 
-router.post('/get-all-scenario-student',studentScenarioController.createOrFetchStudentScenarios);
+router.post('/get-all-scenario-student',authenticateToken,studentScenarioController.createOrFetchStudentScenarios);
 
 router.put('/:id', authenticateToken, studentScenarioController.updateStudentScenario);
 
