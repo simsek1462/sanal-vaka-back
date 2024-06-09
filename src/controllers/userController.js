@@ -27,7 +27,7 @@ exports.getUserById = async (req, res) => {
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    console.log(token)
+
     let userId;
     if (!token) {
       return res.sendStatus(401);
@@ -36,7 +36,7 @@ exports.getUserById = async (req, res) => {
 
       const decodedToken = jwt.verify(token, config.secret);
       userId = decodedToken.id;
-      console.log(userId);
+
 
     } catch (error) {
       return res.sendStatus(401);

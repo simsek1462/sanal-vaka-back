@@ -6,7 +6,7 @@ const { verifyTokens } = require('./authController');
 
 exports.getAllStudentScenarios = async (req, res) => {
     try {
-      
+
         const studentScenarios = await StudentScenario.find();
         res.status(200).json(studentScenarios);
     } catch (error) {
@@ -28,20 +28,16 @@ exports.getStudentScenarioById = async (req, res) => {
 
 exports.createOrUpdateStudentScenario = async (req, res) => {
     try {
-        const {  scenarioId, selectedChoices, selectedQuestions } = req.body;
-        const authHeader=req.headers['authorization'];
+        const { scenarioId, selectedChoices, selectedQuestions } = req.body;
+        const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        console.log(token)
         let userId;
         if (!token) {
             return res.sendStatus(401);
         }
         try {
-           
-            const decodedToken = jwt.verify(token,config.secret);
+            const decodedToken = jwt.verify(token, config.secret);
             userId = decodedToken.id;
-            console.log(userId);
-            
         } catch (error) {
             return res.sendStatus(401);
         }
@@ -50,7 +46,7 @@ exports.createOrUpdateStudentScenario = async (req, res) => {
             return res.status(404).json({ error: 'Scenario not found' });
         }
 
-        let studentScenario = await StudentScenario.findOne({ userId, scenarioId });
+        let studentScenario = await StudentScenario.findOne({ studentId: userId, scenarioId });
 
         if (studentScenario) {
             // If StudentScenario exists, check attemptsLeft
@@ -63,7 +59,7 @@ exports.createOrUpdateStudentScenario = async (req, res) => {
         } else {
             // Create new StudentScenario
             studentScenario = new StudentScenario({
-                userId,
+                studentId: userId,
                 scenarioId,
                 score: 0,
                 attemptsLeft: 3 // Or any default value
@@ -76,22 +72,23 @@ exports.createOrUpdateStudentScenario = async (req, res) => {
         // Multiple choice answers scoring
         selectedChoices.forEach(choiceId => {
             if (scenario.multipleChoiceAnwsers.some(answer => answer.equals(choiceId))) {
-                totalScore += 1; // Doğru cevap için puan ekleyin
+                totalScore += 18; // Doğru cevap için puan ekleyin
             } else {
-                totalScore -= 1; // Yanlış cevap için puan azaltın
+                totalScore -= 3; // Yanlış cevap için puan azaltın
             }
         });
 
         // Questions scoring
-        selectedQuestions.forEach(selectedQuestionId => {
-            if (scenario.questions.some(q => q.questionId.equals(selectedQuestionId))) {
-                totalScore += 1; // Doğru cevap için puan ekleyin
+        selectedQuestions.forEach(({ questionId }) => {
+            if (scenario.questions.some(q => q.questionId.equals(questionId))) {
+                totalScore += 18; // Doğru cevap için puan ekleyin
             } else {
-                totalScore -= 1; // Yanlış cevap için puan azaltın
+                totalScore -= 3; // Yanlış cevap için puan azaltın
             }
         });
 
         studentScenario.score = totalScore;
+
         await studentScenario.save();
 
         res.status(201).json(studentScenario);
@@ -102,7 +99,23 @@ exports.createOrUpdateStudentScenario = async (req, res) => {
 
 exports.createOrFetchStudentScenarios = async (req, res) => {
     try {
-        const { studentId, scenarioIds } = req.body;
+        const { scenarioIds } = req.body;
+        console.log('req.body', scenarioIds)
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+
+        let userId;
+        if (!token) {
+            return res.sendStatus(401);
+        }
+        try {
+
+            const decodedToken = jwt.verify(token, config.secret);
+            userId = decodedToken.id;
+
+        } catch (error) {
+            return res.sendStatus(401);
+        }
 
         // Ensure scenarioIds is an array
         if (!Array.isArray(scenarioIds)) {
@@ -111,17 +124,19 @@ exports.createOrFetchStudentScenarios = async (req, res) => {
 
         // Loop through each scenarioId
         for (const scenarioId of scenarioIds) {
+            console.log('scenId:', scenarioId)
+
             const scenario = await Scenario.findById(scenarioId);
             if (!scenario) {
                 return res.status(404).json({ error: `Scenario with ID ${scenarioId} not found` });
             }
 
-            let studentScenario = await StudentScenario.findOne({ studentId, scenarioId });
+            let studentScenario = await StudentScenario.findOne({ studentId: userId, scenarioId });
 
             if (!studentScenario) {
                 // Create new StudentScenario if not exists
                 studentScenario = new StudentScenario({
-                    studentId,
+                    studentId: userId,
                     scenarioId,
                     score: 0,
                     attemptsLeft: 4
@@ -131,7 +146,7 @@ exports.createOrFetchStudentScenarios = async (req, res) => {
         }
 
         const allStudentScenarios = await StudentScenario.find({
-            studentId,
+            studentId: userId,
             scenarioId: { $in: scenarioIds }
         }).populate('scenarioId');
 
