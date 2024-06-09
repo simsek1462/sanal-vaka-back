@@ -1,5 +1,6 @@
 const Choice = require('../models/choice');
 const HeadTitle = require('../models/headTitle');
+const mongoose = require('mongoose');
 
 exports.createChoice = async (req, res) => {
   try {
@@ -28,7 +29,10 @@ exports.getAllChoices = async (req, res) => {
   }
 };
 
+
+
 exports.getChoiceById = async (req, res) => {
+  console.log("girdi");
   try {
     const { id } = req.params;
     const choice = await Choice.findById(id);
@@ -37,6 +41,35 @@ exports.getChoiceById = async (req, res) => {
     }
     res.status(200).json(choice);
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getChoicesByIds = async (req, res) => {
+  console.log("Request received");
+  try {
+    const { arrayOfId } = req.body;
+    console.log("Array of IDs", arrayOfId);
+
+    const choices = [];
+    
+    for (const id of arrayOfId) {
+      // Validate if the ID is a valid ObjectId
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        const choice = await Choice.findById(id);
+        if (choice) {
+          choices.push(choice);
+        } else {
+          console.log(`Choice with ID ${id} not found`);
+        }
+      } else {
+        console.log(`Invalid ObjectId: ${id}`);
+      }
+    }
+
+    res.status(200).json(choices);
+  } catch (error) {
+    console.error("Error:", error);
     res.status(500).json({ error: error.message });
   }
 };

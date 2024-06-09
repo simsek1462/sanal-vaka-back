@@ -13,7 +13,6 @@ router.get('/get-heads/:id',authenticateToken,stepController.getHeadsByStepId);
 
 router.get('/get-questions/:id',authenticateToken,stepController.getQuestionsByStepId);
 
-
 router.put('/:id', authenticateToken,stepController.updateStepById);
 
 router.delete('/:id', authenticateToken,stepController.deleteStepById);

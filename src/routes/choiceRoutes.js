@@ -9,6 +9,8 @@ router.get('/', authenticateToken, choiceController.getAllChoices);
 
 router.get('/:id', authenticateToken, choiceController.getChoiceById);
 
+router.post('/get-choices',authenticateToken,choiceController.getChoicesByIds);
+
 router.put('/:id', authenticateToken, choiceController.updateChoiceById);
 
 router.delete('/:id', authenticateToken, choiceController.deleteChoiceById);
