@@ -48,3 +48,12 @@ exports.deleteClinic = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.getClinicsByDepartmentId = async (req, res) => {
+    try {
+      const clinics = await Clinic.find({ departments: req.params.departmentId });
+      res.status(200).json(clinics);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };

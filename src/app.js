@@ -11,6 +11,7 @@ const stepRoutes = require('./routes/stepRoutes');
 const questionRoutes = require('./routes/questionRoutes');
 const departmentRoutes = require('./routes/departmentRoutes');
 const componentTypeRoutes = require('./routes/componentTypeRoutes');
+const clinicRoutes = require('./routes/clinicRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,7 @@ app.use('/api/step', stepRoutes);
 app.use('/api/question', questionRoutes);
 app.use('/api/department', departmentRoutes);
 app.use('/api/componentType', componentTypeRoutes);
+app.use('/api/clinic', clinicRoutes);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

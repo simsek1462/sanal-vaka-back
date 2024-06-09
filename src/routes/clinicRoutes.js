@@ -8,5 +8,5 @@ router.get('/:id', authenticateToken, clinicController.getClinicById);
 router.post('/', authenticateToken, clinicController.createClinic);
 router.put('/:id', authenticateToken, clinicController.updateClinic); 
 router.delete('/:id', authenticateToken, clinicController.deleteClinic);
-
+router.get('/department/:departmentId', authenticateToken, clinicController.getClinicsByDepartmentId);
 module.exports = router;
