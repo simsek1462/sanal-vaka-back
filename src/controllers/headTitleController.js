@@ -65,7 +65,7 @@ exports.deleteHeadTitleById = async (req, res) => {
       return res.status(404).json({ error: 'HeadTitle not found' });
     }
 
-    const step = await Step.findById(stepID);
+    const step = await Step.findById(stepID); 
     if (!step) {
       return res.status(404).json({ error: 'Step not found' });
     }
